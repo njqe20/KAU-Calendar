@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>جدولي في التقويم — جامعة الملك عبدالعزيز</title>
+<meta name="description" content="حوّل جدولك من بوابة الجامعة إلى ملف تقويم، مع تخطّي أيام الإجازات من خطة العام الدراسي.">
+<style>
+:root{--ink:#12241d;--paper:#eceee9;--card:#fbfcfa;--line:#c9d0c9;--kau:#0d5c3f;
+  --kau-soft:#e2eee8;--ochre:#a9701f;--ochre-soft:#f6ecdb;--muted:#5d6b64;--red:#8c2f2f;--red-soft:#f7e9e9}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);line-height:1.55;
+  font-family:"Segoe UI","Noto Sans Arabic",Tahoma,system-ui,sans-serif}
+.sheet{max-width:1000px;margin:0 auto;padding:28px 20px 72px}
+.masthead{border-bottom:3px solid var(--kau);padding-bottom:14px;margin-bottom:10px;
+  display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.masthead h1{margin:0;font-size:27px;font-weight:650;letter-spacing:-.4px;line-height:1.2}
+.masthead p{margin:5px 0 0;font-size:14px;color:var(--muted);max-width:54ch}
+.tick{font-size:12px;color:var(--kau);font-weight:600;text-align:end;line-height:1.7}
+.privacy{font-size:12.5px;color:var(--muted);margin:0 0 26px;padding-inline-start:11px;
+  border-inline-start:2px solid var(--line)}
+.panel{background:var(--card);border:1px solid var(--line);margin-bottom:20px}
+.phead{display:flex;align-items:baseline;gap:10px;padding:12px 16px;
+  border-bottom:1px solid var(--line);background:var(--kau-soft)}
+.pnum{width:22px;height:22px;flex:none;border-radius:50%;background:var(--kau);color:#fff;
+  font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center}
+.phead h2{margin:0;font-size:15px;font-weight:650}
+.phead .hint{font-size:13px;color:var(--muted)}
+.pbody{padding:16px}
+textarea,input,select{font:inherit;color:inherit;background:#fff;border:1px solid var(--line);
+  border-radius:3px;padding:7px 9px;width:100%}
+textarea{min-height:140px;resize:vertical;font-size:13px;line-height:1.55}
+button{font:inherit;font-weight:600;cursor:pointer;border:1px solid var(--kau);border-radius:3px;
+  background:var(--kau);color:#fff;padding:8px 18px}
+button:hover:not(:disabled){background:#0a4a33}
+button:disabled{opacity:.4;cursor:not-allowed}
+button.ghost{background:transparent;color:var(--kau)}
+button.ghost:hover:not(:disabled){background:var(--kau-soft)}
+button.tiny{padding:3px 9px;font-size:12px;font-weight:500;border-color:var(--line);background:#fff;color:var(--red)}
+button.tiny:hover{background:var(--red-soft)}
+:focus-visible{outline:2px solid var(--ochre);outline-offset:2px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:start;font-weight:600;font-size:11.5px;color:var(--muted);padding:6px 8px;border-bottom:1px solid var(--line)}
+td{padding:7px 8px;border-bottom:1px solid #e6eae6;vertical-align:top}
+tr.off td{opacity:.35}
+.code{font-weight:650;white-space:nowrap}
+.sub{color:var(--muted);font-size:12px}
+.src{color:#8a958f;font-size:11.5px;margin-top:3px;max-width:44ch;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.chip{display:inline-block;background:var(--kau-soft);color:var(--kau);border-radius:2px;
+  padding:1px 6px;font-size:11.5px;margin-inline-end:3px}
+.flag{display:inline-block;background:var(--ochre-soft);color:var(--ochre);border-radius:2px;
+  padding:1px 6px;font-size:11.5px;margin-top:3px}
+.note{font-size:13px;color:var(--muted);margin:0 0 12px}
+.warn{background:var(--ochre-soft);border-inline-start:3px solid var(--ochre);padding:9px 12px;font-size:13px;margin-bottom:12px}
+.err{background:var(--red-soft);border-inline-start:3px solid var(--red);padding:9px 12px;font-size:13px;margin-bottom:12px}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.empty{text-align:center;color:#7d8a83;font-size:13.5px;padding:22px 10px}
+.out{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;
+  background:var(--kau);color:#fff;padding:18px 20px}
+.out b{font-size:19px}
+.out button{background:#fff;color:var(--kau);border-color:#fff}
+.out button:hover:not(:disabled){background:#d6e6dd}
+.out button:disabled{background:#5a8d78;color:#e2eee8;border-color:#5a8d78;opacity:1}
+ol.steps{font-size:13px;line-height:1.8;color:var(--muted);margin:14px 0 0;padding-inline-start:18px}
+.scroll{overflow-x:auto}
+input[type=checkbox]{width:16px}
+details{margin-top:12px;font-size:13px}
+summary{cursor:pointer;color:var(--kau);font-weight:600;padding:5px 0}
+pre.raw{background:#fff;border:1px solid var(--line);padding:10px;max-height:260px;
+  overflow:auto;font-size:12px;line-height:1.65;white-space:pre-wrap;word-break:break-word;margin:6px 0 0}
+.impact{border:1px solid var(--line);background:#fff;padding:12px;margin-top:14px;font-size:13px}
+.impact h3{margin:0 0 8px;font-size:13.5px;font-weight:650}
+.impact ul{margin:0;padding-inline-start:18px;color:var(--muted);line-height:1.75}
+.gate{background:var(--ochre-soft);border:1px solid #e0cba6;padding:11px 13px;margin-top:14px;font-size:13.5px}
+.gate label{display:flex;gap:8px;align-items:flex-start;cursor:pointer}
+footer{font-size:12px;color:var(--muted);text-align:center;margin-top:34px}
+footer a{color:var(--kau)}
+@media(max-width:640px){.masthead h1{font-size:22px}.hide-s{display:none}}
+</style>
+</head>
+<body>
+<div class="sheet">
+
+  <div class="masthead">
+    <div>
+      <h1>جدولي في التقويم</h1>
+      <p>حوّل جدولك من بوابة الجامعة إلى ملف تقويم واحد، وارفع خطة العام الدراسي ليتخطّى أيام الإجازات.</p>
+    </div>
+    <div class="tick" id="tick">بانتظار الجدول</div>
+  </div>
+  <p class="privacy">كل شيء يعمل داخل متصفحك. جدولك ورقمك المرجعي وأسماء أساتذتك وملف الخطة لا تُرسل إلى أي خادم.</p>
+
+  <div class="panel">
+    <div class="phead"><div class="pnum">١</div><h2>الجدول من البوابة</h2>
+      <span class="hint hide-s">افتح «جدول الطالب التفصيلي» ← Ctrl+A ← Ctrl+C</span></div>
+    <div class="pbody">
+      <textarea id="raw" placeholder="الصق هنا صفحة «جدول الطالب التفصيلي» كاملة."></textarea>
+      <div class="row" style="margin-top:10px">
+        <button id="btnParse">اقرأ الجدول</button>
+        <span class="sub" id="parseInfo"></span>
+      </div>
+      <div id="warns"></div>
+      <div class="scroll"><table id="tblMeet" hidden>
+        <thead><tr><th></th><th>المقرر</th><th>الأيام</th><th>الوقت</th>
+          <th class="hide-s">المكان</th><th>الفترة</th></tr></thead><tbody></tbody></table></div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="phead"><div class="pnum">٢</div><h2>خطة العام الدراسي</h2>
+      <span class="hint hide-s">ارفع الملف الذي ترسله الجامعة</span></div>
+    <div class="pbody">
+      <p class="note">ارفع ملف الخطة (PDF) أو الصق نصها. سأستخرج التواريخ وأعرضها مع السطر الذي جاءت منه — راجعها قبل المتابعة.</p>
+      <div class="row" style="margin-bottom:10px">
+        <input type="file" id="planFile" accept=".pdf,.txt" style="flex:1 1 240px">
+        <button id="btnPlan">اقرأ الملف</button>
+      </div>
+      <textarea id="planText" style="min-height:80px" placeholder="أو الصق نص الخطة هنا (انسخه من عارض PDF)"></textarea>
+      <div id="planMsg" style="margin-top:12px"></div>
+      <details id="rawWrap" hidden><summary>اعرض النص الذي قرأته من الملف</summary>
+        <p class="sub" style="margin:4px 0 0">إن ظهر النص مبعثراً أو فارغاً، فالملف غالباً صورة ممسوحة ضوئياً. الصق النص يدوياً أو أدخل الإجازات بالأسفل.</p>
+        <pre class="raw" id="rawOut"></pre></details>
+
+      <div class="scroll"><table id="tblHol" style="margin-top:16px">
+        <thead><tr><th></th><th>البند</th><th>النوع</th><th>من</th><th>إلى</th><th></th></tr></thead>
+        <tbody></tbody></table></div>
+      <div class="row" style="margin-top:10px">
+        <button class="ghost" id="btnAddHol">أضف بنداً يدوياً</button>
+        <label class="sub"><input type="checkbox" id="showHol" checked style="margin-inline-end:6px">أضف الإجازات والمواعيد كأحداث في التقويم</label>
+      </div>
+
+      <div class="impact" id="impact" hidden>
+        <h3>المحاضرات التي ستُحذف</h3>
+        <div id="impactBody"></div>
+      </div>
+
+      <div class="gate" id="gate" hidden>
+        <label><input type="checkbox" id="confirmed">
+          <span>راجعت التواريخ أعلاه وقارنتها بملف الخطة، وهي صحيحة.</span></label>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="phead"><div class="pnum">٣</div><h2>التصدير</h2></div>
+    <div class="pbody">
+      <div class="row" style="margin-bottom:16px">
+        <label style="flex:2 1 240px"><div class="sub" style="margin-bottom:4px">اسم التقويم</div>
+          <input id="calName" value="جدولي الدراسي"></label>
+        <label style="flex:1 1 150px"><div class="sub" style="margin-bottom:4px">تنبيه قبل المحاضرة</div>
+          <select id="reminder"><option value="0">بدون</option><option value="10">١٠ دقائق</option>
+            <option value="15" selected>١٥ دقيقة</option><option value="30">٣٠ دقيقة</option></select></label>
+      </div>
+      <div class="out">
+        <div><b id="cnt">٠ محاضرة</b>
+          <div style="font-size:13px;opacity:.87;margin-top:3px" id="skipInfo">لا مواعيد تقع في إجازة</div></div>
+        <button id="btnDl" disabled>نزّل ملف التقويم</button>
+      </div>
+      <ol class="steps">
+        <li>في تقويم Google: أنشئ تقويماً جديداً باسم الفصل — لا تستورد داخل تقويمك الأساسي.</li>
+        <li>الإعدادات ← استيراد وتصدير ← اختر الملف ← اختر التقويم الجديد.</li>
+        <li>تغيّر جدولك بعد الحذف والإضافة؟ احذف التقويم كاملاً وأعد الاستيراد.</li>
+      </ol>
+    </div>
+  </div>
+
+  <footer>يعمل داخل متصفحك، بدون خادم.</footer>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script>
+const PDFJS_CDNS=[
+  {lib:"https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js",
+   worker:"https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js"},
+  {lib:"https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.min.js",
+   worker:"https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js"}
+];
+if(window.pdfjsLib) pdfjsLib.GlobalWorkerOptions.workerSrc = PDFJS_CDNS[0].worker;
+
+function loadScript(src){
+  return new Promise((res,rej)=>{
+    const s=document.createElement("script");
+    s.src=src; s.onload=()=>res(); s.onerror=()=>rej(new Error("script"));
+    document.head.appendChild(s);
+  });
+}
+async function ensurePdfJs(){
+  if(window.pdfjsLib){
+    if(!pdfjsLib.GlobalWorkerOptions.workerSrc)
+      pdfjsLib.GlobalWorkerOptions.workerSrc=PDFJS_CDNS[0].worker;
+    return true;
+  }
+  for(const c of PDFJS_CDNS){
+    try{
+      await withTimeout(loadScript(c.lib),12000,"cdn");
+      if(window.pdfjsLib){pdfjsLib.GlobalWorkerOptions.workerSrc=c.worker;return true;}
+    }catch(e){}
+  }
+  return false;
+}
+function withTimeout(p,ms,tag){
+  let t;
+  return Promise.race([
+    Promise.resolve(p).finally(()=>clearTimeout(t)),
+    new Promise((_,rej)=>{t=setTimeout(()=>rej(new Error("timeout:"+(tag||""))),ms);})
+  ]);
+}
+const yieldUI=()=>new Promise(r=>setTimeout(r,0));
+
+const DAY_LETTERS={U:0,M:1,T:2,W:3,R:4,F:5,S:6};
+const JS_TO_ICS=["SU","MO","TU","WE","TH","FR","SA"];
+const AR_DAYS=["الأحد","الإثنين","الثلاثاء","الأربعاء","الخميس","الجمعة","السبت"];
+const TZ=180;
+const pad=n=>String(n).padStart(2,"0");
+const uid=()=>Math.random().toString(36).slice(2,10);
+const $=id=>document.getElementById(id);
+const escHtml=s=>String(s||"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+function normalize(s){
+  return s.replace(/[\u0660-\u0669]/g,d=>String.fromCharCode(d.charCodeAt(0)-0x0660+48))
+          .replace(/[\u06f0-\u06f9]/g,d=>String.fromCharCode(d.charCodeAt(0)-0x06f0+48))
+          .replace(/[\u200b-\u200f\u202a-\u202e\u2066-\u2069\u0640]/g,"")
+          .replace(/[\u2013\u2014\u2212]/g,"-");
+}
+const parseDMY=s=>{const m=s.match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+  return m?new Date(Date.UTC(+m[3],+m[2]-1,+m[1])):null;};
+const parseISO=s=>{const m=String(s||"").match(/(\d{4})-(\d{1,2})-(\d{1,2})/);
+  return m?new Date(Date.UTC(+m[1],+m[2]-1,+m[3])):null;};
+const toISO=d=>`${d.getUTCFullYear()}-${pad(d.getUTCMonth()+1)}-${pad(d.getUTCDate())}`;
+const arDate=d=>`${AR_DAYS[d.getUTCDay()]} ${d.getUTCDate()}/${d.getUTCMonth()+1}`;
+function parseClock(s){const m=s.match(/(\d{1,2}):(\d{2})\s*([AP])M/i);if(!m)return null;
+  let h=+m[1]%12;if(m[3].toUpperCase()==="P")h+=12;return{h,m:+m[2]};}
+const fmtClock=t=>{const ap=t.h>=12?"PM":"AM";const h=t.h%12===0?12:t.h%12;return h+":"+pad(t.m)+" "+ap;};
+const icsStamp=(day,time)=>{const t=new Date(day.getTime()+(time.h*60+time.m-TZ)*60000);
+  return `${t.getUTCFullYear()}${pad(t.getUTCMonth()+1)}${pad(t.getUTCDate())}T${pad(t.getUTCHours())}${pad(t.getUTCMinutes())}00Z`;};
+
+/* ---------------- schedule ---------------- */
+function parseSchedule(rawText){
+  const lines=normalize(rawText).split(/\r?\n/), out=[], warnings=[];
+  let course=null;
+  const headerRe=/^(.*?)\s+-\s+([A-Z]{2,5})\s*(\d{3}[A-Z]?)\s+-\s+([A-Za-z0-9]{1,6})\s*$/;
+  const timeRe=/(\d{1,2}:\d{2}\s*[AP]M)\s*-\s*(\d{1,2}:\d{2}\s*[AP]M)/i;
+  const dateRe=/(\d{1,2}\/\d{1,2}\/\d{4})\s*-\s*(\d{1,2}\/\d{1,2}\/\d{4})/;
+
+  for(const rl of lines){
+    const line=rl.trim(); if(!line) continue;
+    const h=line.match(headerRe);
+    if(h){course={name:h[1].trim(),code:h[2]+" "+h[3],section:h[4],crn:"",instructor:""};continue;}
+    if(!course) continue;
+    if(/CRN/i.test(line)){const c=line.match(/CRN[^\d]*(\d{4,6})/i);if(c)course.crn=c[1];continue;}
+    if(/الاستاذ المعين|الأستاذ المعين/.test(line)){
+      course.instructor=line.split(/[:\t]/).pop().replace(/E-?mail/gi,"").trim();continue;}
+    const tm=line.match(timeRe), dm=line.match(dateRe);
+    if(!tm||!dm) continue;
+
+    let days="",place="",kind="",teacher="";
+    const cols=line.split("\t").map(c=>c.trim()).filter(Boolean);
+    const ti=cols.findIndex(c=>timeRe.test(c));
+    if(ti>=0&&cols.length>=ti+4){
+      days=cols[ti+1]||"";place=cols[ti+2]||"";kind=cols[ti+4]||"";teacher=cols[ti+5]||"";
+    }else{
+      const mid=line.slice(tm.index+tm[0].length,dm.index);
+      const dtok=mid.match(/(?:^|\s)([UMTWRFS]{1,7})(?:\s|$)/);
+      days=dtok?dtok[1]:"";
+      place=dtok?mid.slice(mid.indexOf(dtok[1])+dtok[1].length).trim():mid.trim();
+      const tail=line.slice(dm.index+dm[0].length).trim().split(/\s{2,}|\t/);
+      kind=tail[0]||"";teacher=tail[1]||"";
+    }
+    const dayNums=[...days.toUpperCase()].filter(c=>c in DAY_LETTERS).map(c=>DAY_LETTERS[c]);
+    if(!dayNums.length){warnings.push(course.code+': تعذّر قراءة الأيام من "'+(days||"—")+'"');continue;}
+    out.push({id:uid(),on:true,code:course.code,name:course.name,section:course.section,crn:course.crn,
+      kind:kind.replace(/\(P\)|E-?mail/gi,"").trim(),days:dayNums,
+      start:parseClock(tm[1]),end:parseClock(tm[2]),place:place.replace(/\s+/g," ").trim(),
+      teacher:(teacher||course.instructor).replace(/\(P\)|E-?mail/gi,"").trim(),
+      from:parseDMY(dm[1]),to:parseDMY(dm[2])});
+  }
+  return {meetings:out,warnings};
+}
+
+/* ---------------- Hijri → Gregorian (Umm al-Qura via Intl) ---------------- */
+let hijriIndex;
+function hijriToG(y,m,d){
+  if(hijriIndex===undefined){
+    hijriIndex=null;
+    try{
+      const fmt=new Intl.DateTimeFormat("en-u-ca-islamic-umalqura",
+        {day:"numeric",month:"numeric",year:"numeric",timeZone:"UTC"});
+      const now=new Date(), map=new Map();
+      const from=new Date(Date.UTC(now.getUTCFullYear()-1,0,1));
+      const to=new Date(Date.UTC(now.getUTCFullYear()+2,11,31));
+      for(let x=new Date(from.getTime());x<=to;x=new Date(x.getTime()+86400000)){
+        const g={}; fmt.formatToParts(x).forEach(p=>{if(p.type!=="literal")g[p.type]=p.value;});
+        const yy=parseInt(g.year,10),mm=parseInt(g.month,10),dd=parseInt(g.day,10);
+        if(!yy||!mm||!dd) continue;
+        const k=yy+"-"+mm+"-"+dd;
+        if(!map.has(k)) map.set(k,new Date(x.getTime()));
+      }
+      if(map.size>300) hijriIndex=map;
+    }catch(e){hijriIndex=null;}
+  }
+  return hijriIndex?hijriIndex.get(y+"-"+m+"-"+d)||null:null;
+}
+
+/* ---------------- academic plan ---------------- */
+const G_MONTHS=[["يناير","كانون الثاني"],["فبراير","شباط"],["مارس","اذار","آذار"],
+  ["ابريل","أبريل","نيسان"],["مايو","أيار"],["يونيو","يونية","حزيران"],
+  ["يوليو","يولية","تموز"],["اغسطس","أغسطس","اب "],["سبتمبر","ايلول","أيلول"],
+  ["اكتوبر","أكتوبر"],["نوفمبر"],["ديسمبر"]];
+const H_MONTHS=[["محرم"],["صفر"],["ربيع الاول","ربيع الأول"],["ربيع الاخر","ربيع الآخر","ربيع الثاني"],
+  ["جمادى الاولى","جمادى الأولى"],["جمادى الاخرة","جمادى الآخرة","جمادى الثانية"],["رجب"],["شعبان"],
+  ["رمضان"],["شوال"],["ذو القعدة","ذي القعدة"],["ذو الحجة","ذي الحجة"]];
+const HOLIDAY_WORDS=/إجاز|اجاز|عطل|عيد|الفطر|الأضحى|الاضحى|اليوم الوطني|التأسيس|التاسيس|تعليق الدراسة|راحة|منتصف الفصل|لا دراسة/;
+const KEY_WORDS=/بداي|بدء|نهاي|آخر موعد|اخر موعد|الاعتذار|الحذف والإضافة|الحذف والاضافة|اختبار|التسجيل|انتظام|تقديم/;
+
+function monthFromWord(line,table){
+  for(let i=0;i<table.length;i++) for(const w of table[i]) if(line.includes(w)) return i+1;
+  return 0;
+}
+
+/* "18 أكتوبر 2026" — the day must sit immediately before the month word
+   and the year immediately after it. Prevents picking up stray numbers
+   like week counts or credit hours elsewhere on the same line. */
+function wordDates(line,table,yearPattern){
+  const found=[];
+  for(let i=0;i<table.length;i++) for(const w of table[i]){
+    let idx=line.indexOf(w);
+    while(idx>-1){
+      const before=line.slice(Math.max(0,idx-10),idx);
+      const after=line.slice(idx+w.length,idx+w.length+16);
+      const dm=before.match(/(\d{1,2})\s*$/);
+      const ym=after.match(new RegExp("^[^\\d]{0,6}("+yearPattern+")"));
+      if(dm&&ym) found.push({d:+dm[1],m:i+1,y:+ym[1]});
+      idx=line.indexOf(w,idx+1);
+    }
+  }
+  return found;
+}
+
+function extractPlan(text){
+  const lines=normalize(text).split(/\r?\n/).map(l=>l.trim())
+    .filter(l=>l.length>3).slice(0,4000);
+  const rows=[];
+  for(const line of lines){
+    const flags=[]; let dates=[];
+
+    const numeric=[...line.matchAll(/(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{4})|(\d{4})-(\d{1,2})-(\d{1,2})/g)];
+    for(const m of numeric){
+      const d=m[1]?new Date(Date.UTC(+m[3],+m[2]-1,+m[1])):new Date(Date.UTC(+m[4],+m[5]-1,+m[6]));
+      if(d.getUTCFullYear()>2000&&d.getUTCFullYear()<2100&&!isNaN(d)) dates.push(d);
+    }
+    if(!dates.length){
+      for(const w of wordDates(line,G_MONTHS,"20\\d{2}"))
+        dates.push(new Date(Date.UTC(w.y,w.m-1,w.d)));
+    }
+    if(!dates.length){
+      for(const m of line.matchAll(/(\d{1,2})[\/\-.](\d{1,2})[\/\-.](14\d{2})/g)){
+        const g=hijriToG(+m[3],+m[2],+m[1]);
+        if(g){dates.push(g);flags.push("محوّل من التاريخ الهجري");}
+      }
+      if(!dates.length){
+        for(const w of wordDates(line,H_MONTHS,"14\\d{2}")){
+          const g=hijriToG(w.y,w.m,w.d);
+          if(g){dates.push(g);flags.push("محوّل من التاريخ الهجري");}
+        }
+      }
+    }
+    if(!dates.length) continue;
+
+    dates.sort((a,b)=>a-b);
+    if(dates.length>2) flags.push("السطر فيه "+dates.length+" تواريخ — تأكد من المدى");
+    const start=dates[0], end=dates[dates.length-1];
+    const isHol=HOLIDAY_WORDS.test(line), isKey=KEY_WORDS.test(line);
+    const type=isHol?"holiday":(isKey?"key":"ignore");
+    if(!isHol&&!isKey) flags.push("لم أتعرّف على نوع البند — حدّده بنفسك");
+    if((end-start)/86400000>30) flags.push("الفترة أطول من ٣٠ يوماً — تأكد");
+
+    const name=line.replace(/\d{1,2}[\/\-.]\d{1,2}[\/\-.]\d{4}/g," ")
+      .replace(/\b(14\d{2}|20\d{2})\b/g," ").replace(/\s{2,}/g," ")
+      .replace(/^[\s\-\u2013.:،]+|[\s\-\u2013.:،]+$/g,"").trim().slice(0,70)||"بند";
+
+    rows.push({id:uid(),on:type!=="ignore",type,name,start:toISO(start),end:toISO(end),
+      src:line.slice(0,120),flags:[...new Set(flags)]});
+  }
+  const seen=new Set();
+  return rows.filter(r=>{const k=r.name+r.start;if(seen.has(k))return false;seen.add(k);return true;});
+}
+
+async function pdfToText(file,onProgress){
+  if(!(await ensurePdfJs())) throw new Error("nolib");
+  const bytes=new Uint8Array(await file.arrayBuffer());
+  let doc=null, lastErr=null;
+  for(const c of PDFJS_CDNS){
+    try{
+      pdfjsLib.GlobalWorkerOptions.workerSrc=c.worker;
+      onProgress&&onProgress("جارٍ فتح الملف…");
+      doc=await withTimeout(pdfjsLib.getDocument({data:bytes.slice(0)}).promise,25000,"open");
+      break;
+    }catch(e){lastErr=e;}
+  }
+  if(!doc) throw lastErr||new Error("open");
+
+  const lines=[];
+  const maxPages=Math.min(doc.numPages,40);
+  for(let p=1;p<=maxPages;p++){
+    onProgress&&onProgress("صفحة "+p+" من "+maxPages+"…");
+    await yieldUI();
+    let tc;
+    try{ tc=await withTimeout((await doc.getPage(p)).getTextContent(),15000,"page"); }
+    catch(e){ continue; }
+    const rows=new Map();
+    tc.items.forEach(it=>{
+      const y=Math.round(it.transform[5]);
+      if(!rows.has(y)) rows.set(y,[]);
+      rows.get(y).push({x:it.transform[4],s:it.str});
+    });
+    [...rows.entries()].sort((a,b)=>b[0]-a[0]).forEach(([,items])=>{
+      lines.push(items.sort((a,b)=>b.x-a.x).map(i=>i.s).join(" ").replace(/\s{2,}/g," ").trim());
+    });
+  }
+  return lines.filter(Boolean).join("\n");
+}
+
+/* ---------------- ICS ---------------- */
+const esc=s=>String(s||"").replace(/\\/g,"\\\\").replace(/[;,]/g,m=>"\\"+m).replace(/\n/g,"\\n");
+function fold(line){const enc=new TextEncoder();let out="",cur="",b=0;
+  for(const ch of line){const n=enc.encode(ch).length;
+    if(b+n>72){out+=cur+"\r\n ";cur="";b=0;} cur+=ch;b+=n;}
+  return out+cur;}
+function occurrences(m){const set=new Set(m.days),list=[];
+  for(let d=new Date(m.from.getTime());d<=m.to;d=new Date(d.getTime()+86400000))
+    if(set.has(d.getUTCDay())) list.push(new Date(d.getTime()));
+  return list;}
+const holBlocks=()=>state.rows.filter(r=>r.on&&r.type==="holiday")
+  .map(r=>({a:parseISO(r.start),b:parseISO(r.end||r.start),name:r.name}))
+  .filter(x=>x.a&&x.b&&x.b>=x.a);
+
+function buildICS(){
+  const now=new Date();
+  const stamp=`${now.getUTCFullYear()}${pad(now.getUTCMonth()+1)}${pad(now.getUTCDate())}T${pad(now.getUTCHours())}${pad(now.getUTCMinutes())}${pad(now.getUTCSeconds())}Z`;
+  const blocks=holBlocks();
+  const L=["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//KAU Schedule Builder//EN","CALSCALE:GREGORIAN",
+    "METHOD:PUBLISH","X-WR-CALNAME:"+esc($("calName").value),"X-WR-TIMEZONE:Asia/Riyadh"];
+  const rem=+$("reminder").value;
+  let skipped=0; const detail=[];
+
+  state.meetings.filter(m=>m.on).forEach((m,i)=>{
+    const occ=occurrences(m); if(!occ.length) return;
+    const kept=[],dropped=[];
+    occ.forEach(d=>{const b=blocks.find(b=>d>=b.a&&d<=b.b);
+      if(b){dropped.push(d);detail.push({hol:b.name,code:m.code,d});}else kept.push(d);});
+    if(!kept.length) return;
+    skipped+=dropped.length;
+    const first=occ[0], until=new Date(m.to.getTime()+86400000);
+    const byday=[...m.days].sort((a,b)=>a-b).map(d=>JS_TO_ICS[d]).join(",");
+    L.push("BEGIN:VEVENT","UID:"+(m.crn||m.code.replace(/\s/g,""))+"-"+i+"-kau@local","DTSTAMP:"+stamp,
+      "DTSTART:"+icsStamp(first,m.start),"DTEND:"+icsStamp(first,m.end),
+      "RRULE:FREQ=WEEKLY;BYDAY="+byday+";UNTIL="+icsStamp(until,{h:0,m:0}));
+    for(let k=0;k<dropped.length;k+=10)
+      L.push("EXDATE:"+dropped.slice(k,k+10).map(d=>icsStamp(d,m.start)).join(","));
+    L.push("SUMMARY:"+esc((m.code+" "+(m.kind?"("+m.kind+")":"")+" — "+m.name).trim()));
+    if(m.place) L.push("LOCATION:"+esc(m.place));
+    L.push("DESCRIPTION:"+esc(["الشعبة: "+m.section,m.crn&&"CRN: "+m.crn,
+      m.teacher&&"المدرّس: "+m.teacher].filter(Boolean).join("\n")));
+    if(rem>0) L.push("BEGIN:VALARM","ACTION:DISPLAY","TRIGGER:-PT"+rem+"M",
+      "DESCRIPTION:"+esc(m.code),"END:VALARM");
+    L.push("END:VEVENT");
+  });
+
+  if($("showHol").checked) state.rows.filter(r=>r.on&&r.type!=="ignore").forEach((r,i)=>{
+    const a=parseISO(r.start), b=parseISO(r.end||r.start); if(!a||!b||b<a) return;
+    L.push("BEGIN:VEVENT","UID:plan-"+i+"-kau@local","DTSTAMP:"+stamp,
+      "DTSTART;VALUE=DATE:"+toISO(a).replace(/-/g,""),
+      "DTEND;VALUE=DATE:"+toISO(new Date(b.getTime()+86400000)).replace(/-/g,""),
+      "SUMMARY:"+esc(r.name),"TRANSP:TRANSPARENT","END:VEVENT");
+  });
+
+  L.push("END:VCALENDAR");
+  return {text:L.map(fold).join("\r\n")+"\r\n",skipped,detail};
+}
+
+/* ---------------- render ---------------- */
+const state={meetings:[],rows:[]};
+
+function renderMeet(){
+  const t=$("tblMeet"),tb=t.querySelector("tbody");tb.innerHTML="";
+  t.hidden=!state.meetings.length;
+  state.meetings.forEach(m=>{
+    const tr=document.createElement("tr");tr.className=m.on?"":"off";
+    tr.innerHTML='<td><input type="checkbox" '+(m.on?"checked":"")+'></td>'+
+      '<td><div class="code">'+escHtml(m.code)+' '+(m.kind?'<span class="chip">'+escHtml(m.kind)+'</span>':'')+'</div>'+
+      '<div class="sub">'+escHtml(m.name)+' · شعبة '+escHtml(m.section)+(m.crn?" · "+escHtml(m.crn):"")+'</div></td>'+
+      '<td>'+m.days.map(d=>AR_DAYS[d]).join("، ")+'</td>'+
+      '<td style="white-space:nowrap" dir="ltr">'+fmtClock(m.start)+' – '+fmtClock(m.end)+'</td>'+
+      '<td class="hide-s sub">'+escHtml(m.place)+'</td>'+
+      '<td class="sub" dir="ltr">'+toISO(m.from)+' → '+toISO(m.to)+'</td>';
+    tr.querySelector("input").onchange=()=>{m.on=!m.on;tr.className=m.on?"":"off";refresh();};
+    tb.appendChild(tr);
+  });
+}
+
+function renderRows(){
+  const tb=$("tblHol").querySelector("tbody");tb.innerHTML="";
+  if(!state.rows.length){
+    tb.innerHTML='<tr><td colspan="6" class="empty">لا توجد بنود بعد. ارفع خطة العام الدراسي أو أضف بنداً يدوياً.</td></tr>';
+    return;}
+  state.rows.forEach(r=>{
+    const tr=document.createElement("tr");tr.className=r.on?"":"off";
+    tr.innerHTML='<td><input type="checkbox" '+(r.on?"checked":"")+'></td>'+
+      '<td><input class="nm" value="'+escHtml(r.name)+'">'+
+      (r.src?'<div class="src" title="'+escHtml(r.src)+'">من الملف: '+escHtml(r.src)+'</div>':'')+
+      (r.flags&&r.flags.length?r.flags.map(f=>'<div class="flag">'+escHtml(f)+'</div>').join(""):"")+'</td>'+
+      '<td><select class="ty"><option value="holiday">إجازة</option>'+
+      '<option value="key">موعد مهم</option><option value="ignore">تجاهل</option></select></td>'+
+      '<td><input type="date" class="st" value="'+(r.start||"")+'"></td>'+
+      '<td><input type="date" class="en" value="'+(r.end||"")+'"></td>'+
+      '<td><button class="tiny">حذف</button></td>';
+    tr.querySelector(".ty").value=r.type;
+    tr.querySelector('input[type=checkbox]').onchange=e=>{r.on=e.target.checked;
+      tr.className=r.on?"":"off";refresh();};
+    tr.querySelector(".nm").oninput=e=>{r.name=e.target.value;};
+    tr.querySelector(".ty").onchange=e=>{r.type=e.target.value;
+      if(r.type==="ignore")r.on=false; renderRows();refresh();};
+    tr.querySelector(".st").onchange=e=>{r.start=e.target.value;refresh();};
+    tr.querySelector(".en").onchange=e=>{r.end=e.target.value;refresh();};
+    tr.querySelector("button").onclick=()=>{state.rows=state.rows.filter(x=>x!==r);renderRows();refresh();};
+    tb.appendChild(tr);
+  });
+}
+
+function renderImpact(detail){
+  const box=$("impact"), body=$("impactBody");
+  box.hidden=!state.meetings.length||!holBlocks().length;
+  if(box.hidden){body.innerHTML="";return;}
+  const groups={};
+  detail.forEach(d=>{(groups[d.hol]=groups[d.hol]||[]).push(d);});
+  const names=Object.keys(groups);
+  if(!names.length){
+    body.innerHTML='<p class="sub" style="margin:0">لا توجد محاضرة تقع داخل الإجازات المحددة. إن كنت تتوقع العكس، فالتواريخ غالباً خاطئة.</p>';
+    return;}
+  body.innerHTML=names.map(n=>{
+    const list=groups[n];
+    return '<div style="margin-bottom:10px"><b>'+escHtml(n)+'</b> <span class="sub">('+list.length+' محاضرة)</span><ul>'+
+      list.slice(0,8).map(x=>'<li>'+escHtml(x.code)+' — '+arDate(x.d)+'</li>').join("")+
+      (list.length>8?'<li>… و'+(list.length-8)+' غيرها</li>':'')+'</ul></div>';
+  }).join("");
+}
+
+function refresh(){
+  const n=state.meetings.filter(m=>m.on).length;
+  const r=buildICS();
+  $("cnt").textContent=n+" محاضرة";
+  $("skipInfo").textContent=r.skipped?r.skipped+" موعد يقع في إجازة وسيُستثنى":"لا مواعيد تقع في إجازة";
+  renderImpact(r.detail);
+  const needGate=state.rows.some(x=>x.on);
+  $("gate").hidden=!needGate;
+  if(!needGate) $("confirmed").checked=false;
+  $("btnDl").disabled=!n||(needGate&&!$("confirmed").checked);
+  $("tick").innerHTML=(state.meetings.length?state.meetings.length+" محاضرة":"بانتظار الجدول")+
+    "<br>"+(holBlocks().length?holBlocks().length+" إجازة":"لا إجازات");
+}
+
+/* ---------------- wiring ---------------- */
+$("btnParse").onclick=()=>{
+  const r=parseSchedule($("raw").value);
+  state.meetings=r.meetings;
+  $("warns").innerHTML=r.warnings.length
+    ?'<div class="warn">'+r.warnings.map(w=>"<div>"+escHtml(w)+"</div>").join("")+'</div>':"";
+  $("parseInfo").textContent=r.meetings.length
+    ?"وجدت "+r.meetings.length+" محاضرة — راجعها قبل التصدير."
+    :"لم أجد أي محاضرة. تأكد أنك نسخت صفحة «جدول الطالب التفصيلي» كاملة.";
+  renderMeet();refresh();
+};
+
+$("btnPlan").onclick=async()=>{
+  const msg=$("planMsg"); msg.innerHTML="";
+  const f=$("planFile").files[0], pasted=$("planText").value.trim();
+  if(!f&&!pasted){msg.innerHTML='<div class="err">اختر ملفاً أو الصق نص الخطة أولاً.</div>';return;}
+  const btn=$("btnPlan");
+  btn.disabled=true;
+  const setP=t=>{btn.textContent=t;};
+  setP("جارٍ القراءة…");
+  let text="", failed="";
+  try{
+    if(f) text = f.name.toLowerCase().endsWith(".pdf")
+      ? await pdfToText(f,setP) : await f.text();
+    if(pasted) text += "\n"+pasted;
+  }catch(e){
+    const m=String(e&&e.message||"");
+    failed = m.indexOf("nolib")>-1||m.indexOf("cdn")>-1
+      ? "تعذّر تحميل قارئ الـPDF — تحقق من اتصالك بالإنترنت، أو الصق نص الخطة في المربع بالأسفل."
+      : m.indexOf("timeout")>-1
+      ? "استغرقت قراءة الملف وقتاً طويلاً وأُوقفت. جرّب ملفاً أصغر، أو افتح الـPDF وانسخ النص والصقه في المربع."
+      : "تعذّرت قراءة الملف. افتح الـPDF وانسخ النص والصقه في المربع، أو أدخل الإجازات يدوياً.";
+  }finally{
+    btn.disabled=false; btn.textContent="اقرأ الملف";
+  }
+  if(failed && !text){msg.innerHTML='<div class="err">'+failed+'</div>';return;}
+
+  $("rawWrap").hidden=false; $("rawOut").textContent=text.slice(0,20000)||"(لم يُقرأ أي نص)";
+
+  const rows=extractPlan(text);
+  let kept=rows, cut=0;
+  if(state.meetings.length){
+    const lo=new Date(state.meetings[0].from.getTime()-45*86400000);
+    const hi=new Date(state.meetings[0].to.getTime()+45*86400000);
+    kept=rows.filter(r=>{const d=parseISO(r.start);return d&&d>=lo&&d<=hi;});
+    cut=rows.length-kept.length;
+  }
+  state.rows=kept.concat(state.rows.filter(r=>!r.src));
+  renderRows();refresh();
+  msg.innerHTML = rows.length
+    ? '<div class="warn">وجدت '+kept.length+' بنداً بتواريخ'+(cut?' (واستبعدت '+cut+' خارج فترة فصلك)':'')+
+      '. راجع كل سطر أدناه وقارنه بالملف — الاستخراج تلقائي وقد يخطئ. عدّل أو احذف ما لا يخصك.</div>'
+    : '<div class="err">لم أجد أي تاريخ في الملف. غالباً الملف صورة ممسوحة ضوئياً. افتح «اعرض النص الذي قرأته» للتأكد، أو أدخل الإجازات يدوياً.</div>';
+};
+
+$("btnAddHol").onclick=()=>{
+  state.rows.push({id:uid(),on:true,type:"holiday",name:"إجازة",start:"",end:"",src:"",flags:[]});
+  renderRows();refresh();};
+$("confirmed").onchange=refresh;
+$("showHol").onchange=refresh;
+$("calName").oninput=refresh;
+$("reminder").onchange=refresh;
+
+$("btnDl").onclick=()=>{
+  const r=buildICS();
+  const blob=new Blob([r.text],{type:"text/calendar;charset=utf-8"});
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(blob);
+  a.download=($("calName").value.replace(/[^\w\u0600-\u06FF -]/g,"").trim()||"schedule")+".ics";
+  a.click();URL.revokeObjectURL(a.href);
+};
+
+renderRows();refresh();
+</script>
+</body>
+</html>
